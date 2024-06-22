@@ -29,9 +29,15 @@ import { CreateTodoItemHandler } from './application/handlers/create-todo-item.h
 import { GetTodoItemHandler } from './application/handlers/get-todo-item.handler';
 import { DeleteTodoItemHandler } from './application/handlers/delete-todo-item.handler';
 import { DeleteTodoListHandler } from './application/handlers/delete-todo-list.handler';
+import { AuthModule } from './auth/auth.module';
+import { UpdateTodoItemHandler } from './application/handlers/update-todo-item.handler';
 
 @Module({
-  imports: [DatabaseModule, CqrsModule],
+  imports: [
+    DatabaseModule,
+    CqrsModule,
+    AuthModule, // Make sure AuthModule is imported
+  ],
   controllers: [UserController, TodoListController, TodoItemController],
   providers: [
     UserService,
@@ -59,6 +65,7 @@ import { DeleteTodoListHandler } from './application/handlers/delete-todo-list.h
     GetTodoItemHandler,
     DeleteTodoItemHandler,
     DeleteTodoListHandler,
+    UpdateTodoItemHandler,
   ],
 })
 export class AppModule {}

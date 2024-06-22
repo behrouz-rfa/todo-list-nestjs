@@ -1,5 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { TodoItemCreatedEvent } from '../../application/events/todo-item-created.event';
+import { TodoItemCreatedEvent } from '../events/todo-item-created.event';
 
 export class TodoLitemaggregate extends AggregateRoot {
   private readonly _id: string;

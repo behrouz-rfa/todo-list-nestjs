@@ -1,23 +1,29 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateUserCommand } from '../../application/commands/create-user.command';
 import { GetUserQuery } from '../../application/queries/get-user.query';
 import { User } from '../../domain/models/user.model';
-import { CreateUserDto } from '../../domain/dtos/create-user.dto';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Controller('users')
+@ApiTags('users')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('register')
-  async registerUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.commandBus.execute(new CreateUserCommand(createUserDto));
-  }
-
   @Get(':id')
+  @ApiOperation({ summary: 'Get User by ID' })
+  @ApiResponse({ status: 200, description: 'Returns the user.', type: User })
+  @ApiResponse({ status: 404, description: 'User not found.' })
   async getUserById(@Param('id') userId: string): Promise<User> {
     return this.queryBus.execute(new GetUserQuery(userId));
   }

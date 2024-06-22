@@ -1,4 +1,3 @@
-// src/application/events/todo-list-created.event.ts
 import { IEvent } from '@nestjs/cqrs';
 
 export class TodoListCreatedEvent implements IEvent {

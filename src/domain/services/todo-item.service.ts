@@ -25,10 +25,6 @@ export class TodoItemService {
     return null;
   }
 
-  async deleteTodoItem(todoListId: string, todoItemId: string): Promise<any> {
-    return this.todoItemRepository.deleteTodoItem(todoListId, todoItemId);
-  }
-
   async updateTodoItem(
     todoListId: string,
     todoItemId: string,

@@ -6,3 +6,10 @@ export class CreateUserDto {
   @ApiProperty()
   readonly password: string;
 }
+
+export class LoginUserDto {
+  @ApiProperty()
+  readonly username: string;
+  @ApiProperty()
+  readonly password: string;
+}

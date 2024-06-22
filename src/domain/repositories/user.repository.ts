@@ -23,12 +23,19 @@ export class UserRepository {
     return this.mapUserDocumentToModel(userDoce);
   }
 
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.userModel.findOne({ username }).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.mapUserDocumentToModel(user);
+  }
   private mapUserDocumentToModel(document: UserDocument): User {
     return {
       id: document._id.toString(),
       username: document.username,
       todoLists: document.todoLists,
-      password: '*******',
+      password: document.password,
     };
   }
 }

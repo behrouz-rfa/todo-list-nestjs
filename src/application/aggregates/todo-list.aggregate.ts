@@ -1,5 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { TodoListCreatedEvent } from '../../application/events/todo-list-created.event';
+import { TodoListCreatedEvent } from '../events/todo-list-created.event';
 
 export class TodoListAggregate extends AggregateRoot {
   private readonly _id: string;
