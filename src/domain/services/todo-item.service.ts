@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TodoItemRepository } from '../repositories/todo-item.repository';
 import { TodoItem } from '../models/todo-item.model';
 import { CreateTodoItemDto } from '../dtos/create-todo-item.dto';
@@ -30,10 +30,15 @@ export class TodoItemService {
     todoItemId: string,
     updateTodoItemDto: UpdateTodoItemDto,
   ): Promise<TodoItem> {
-    return this.todoItemRepository.updateTodoItem(
+    const updated = await this.todoItemRepository.updateTodoItem(
       todoListId,
       todoItemId,
       updateTodoItemDto,
     );
+
+    if (!updated) {
+      throw new NotFoundException('TodoItem not updated');
+    }
+    return this.findTodoItemById(todoListId, todoItemId);
   }
 }

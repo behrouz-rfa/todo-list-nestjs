@@ -9,6 +9,7 @@ services:
       - "3000:3000"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/todo-list
+      - JWT_SECRET="604d97a7-0168-4d4c-87ac-b4c69a641e41"
     depends_on:
       - mongo
     networks:

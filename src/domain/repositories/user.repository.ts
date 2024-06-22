@@ -26,7 +26,7 @@ export class UserRepository {
   async findByUsername(username: string): Promise<User> {
     const user = await this.userModel.findOne({ username }).exec();
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
     }
     return this.mapUserDocumentToModel(user);
   }

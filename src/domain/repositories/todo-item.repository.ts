@@ -100,7 +100,6 @@ export class TodoItemRepository {
     if (!result) {
       throw new NotFoundException('TodoItem not found');
     }
-    console.log(result);
 
     return { deleted: true };
   }
@@ -109,7 +108,7 @@ export class TodoItemRepository {
     todoListId: string,
     todoItemId: string,
     updateTodoItemDto: UpdateTodoItemDto,
-  ): Promise<TodoItem> {
+  ): Promise<any> {
     const updateFields: any = {};
     if (updateTodoItemDto.title !== undefined) {
       updateFields['todoItems.$.title'] = updateTodoItemDto.title;
@@ -132,13 +131,7 @@ export class TodoItemRepository {
     if (!result) {
       throw new NotFoundException('TodoItem not found');
     }
-    // Fetch the updated item directly from the document
-    const updatedItem = result.todoItems.find(item => item._id.toString() === todoItemId);
-    if (!updatedItem) {
-      throw new NotFoundException('TodoItem not found in updated document');
-    }
-
-    return this.mapTodoItemDocumentToModel(updatedItem);
+    return { deleted: true };
   }
 
   private mapTodoItemDocumentToModel(document: any): TodoItem {
