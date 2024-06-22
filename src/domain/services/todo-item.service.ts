@@ -18,11 +18,11 @@ export class TodoItemService {
     );
   }
 
-  async findTodoItemById(todoItemId: string): Promise<TodoItem> {
-    // Implement find by id logic if necessary
-    // Not currently supported as per provided code
-    console.log('Method not implemented', todoItemId);
-    return null;
+  async findTodoItemById(
+    todoListId: string,
+    todoItemId: string,
+  ): Promise<TodoItem> {
+    return this.todoItemRepository.getItemById(todoListId, todoItemId);
   }
 
   async updateTodoItem(

@@ -8,14 +8,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateTodoItemDto } from '../../domain/dtos/create-todo-item.dto';
 import { UpdateTodoItemDto } from '../../domain/dtos/update-todo-item.dto';
 import { TodoItem } from '../../domain/models/todo-item.model';
 import { CreateTodoItemCommand } from '../../application/commands/create-todo-item.command';
 import { UpdateTodoItemCommand } from '../../application/commands/update-todo-item.command';
 import { DeleteTodoItemCommand } from '../../application/commands/delete-todo-item.command';
-import { GetTodoListQuery } from '../../application/queries/get-todo-list.query';
 
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import {
@@ -24,13 +23,17 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { GetTodoItemQuery } from '../../application/queries/get-todo-item.query';
 
 @Controller('todo-items')
 @UseGuards(JwtAuthGuard)
 @ApiTags('TodoItem')
 @ApiBearerAuth()
 export class TodoItemController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Post(':todoListID')
   @ApiOperation({ summary: 'Create a new Todo Item' })
@@ -47,7 +50,7 @@ export class TodoItemController {
     return this.commandBus.execute(command);
   }
 
-  @Get(':id')
+  @Get(':todoListID/:todoItemId')
   @ApiOperation({ summary: 'Get a Todo Item by ID' })
   @ApiResponse({
     status: 200,
@@ -55,8 +58,11 @@ export class TodoItemController {
     type: TodoItem,
   })
   @ApiResponse({ status: 404, description: 'Todo Item not found.' })
-  async getTodoItemById(@Param('id') todoItemId: string): Promise<TodoItem> {
-    return this.commandBus.execute(new GetTodoListQuery(todoItemId));
+  async getTodoItemById(
+    @Param('todoListID') todoListID: string,
+    @Param('todoItemId') todoItemId: string,
+  ): Promise<TodoItem> {
+    return this.queryBus.execute(new GetTodoItemQuery(todoListID, todoItemId));
   }
 
   @Delete(':todoListID/:todoItemId')

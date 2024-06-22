@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { TodoItemController } from '../infrastructure/controllers/todo-item.controller';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TodoItem } from '../domain/models/todo-item.model';
 import { UpdateTodoItemCommand } from '../application/commands/update-todo-item.command';
@@ -22,8 +22,12 @@ class MockJwtAuthGuard {
   }
 }
 
+const mockQueryBus = {
+  execute: jest.fn().mockResolvedValue(mockTodoItem),
+};
 // Mock TodoItemRepository
 const mockTodoItemRepository = {
+  getItemById: jest.fn().mockResolvedValue(mockTodoItem),
   createTodoItem: jest.fn().mockResolvedValue(mockTodoItem),
   deleteTodoItem: jest.fn().mockResolvedValue({ deleted: true }),
   updateTodoItem: jest.fn().mockResolvedValue({
@@ -68,6 +72,10 @@ describe('TodoItemController (e2e)', () => {
           },
         },
         {
+          provide: QueryBus,
+          useValue: mockQueryBus,
+        },
+        {
           provide: TodoItemRepository,
           useValue: mockTodoItemRepository,
         },
@@ -104,11 +112,12 @@ describe('TodoItemController (e2e)', () => {
       });
   });
 
-  it('/todo-items/:id (GET)', async () => {
+  it('/todo-items/:todoListID/:todoItemId (GET)', async () => {
+    const todoListID = '123';
     const todoItemId = '456';
 
     await request(app.getHttpServer())
-      .get(`/todo-items/${todoItemId}`)
+      .get(`/todo-items/${todoListID}/${todoItemId}`)
       .set('Authorization', 'Bearer test-token')
       .expect(200)
       .expect((res) => {

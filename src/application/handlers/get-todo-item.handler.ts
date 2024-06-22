@@ -8,7 +8,9 @@ export class GetTodoItemHandler implements IQueryHandler<GetTodoItemQuery> {
   constructor(private readonly todoItemService: TodoItemService) {}
 
   async execute(query: GetTodoItemQuery): Promise<TodoItem> {
-    const { todoItemId } = query;
-    return this.todoItemService.findTodoItemById(todoItemId);
+    return this.todoItemService.findTodoItemById(
+      query.todoListId,
+      query.todoItemId,
+    );
   }
 }

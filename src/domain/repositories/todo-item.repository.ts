@@ -26,6 +26,32 @@ export class TodoItemRepository {
     return this.mapTodoItemDocumentToModel(addedItem);
   }
 
+  async getItemById(todoListId: string, todoItemId: string): Promise<TodoItem> {
+    const aggregationPipeline: PipelineStage[] = [
+      { $match: { _id: new mongoose.Types.ObjectId(todoListId) } },
+      { $unwind: '$todoItems' },
+      { $match: { 'todoItems._id': new mongoose.Types.ObjectId(todoItemId) } },
+      {
+        $project: {
+          _id: '$todoItems._id',
+          title: '$todoItems.title',
+          description: '$todoItems.description',
+          priority: '$todoItems.priority',
+        },
+      },
+    ];
+
+    const result = await this.todoListModel
+      .aggregate(aggregationPipeline)
+      .exec();
+
+    if (result.length === 0) {
+      throw new NotFoundException('TodoItem not found');
+    }
+
+    return this.mapTodoItemDocumentToModel(result[0]);
+  }
+
   async deleteTodoItem(todoListId: string, todoItemId: string): Promise<any> {
     const aggregationPipeline: PipelineStage[] = [
       { $match: { _id: new mongoose.Types.ObjectId(todoListId) } },
@@ -106,8 +132,13 @@ export class TodoItemRepository {
     if (!result) {
       throw new NotFoundException('TodoItem not found');
     }
+    // Fetch the updated item directly from the document
+    const updatedItem = result.todoItems.find(item => item._id.toString() === todoItemId);
+    if (!updatedItem) {
+      throw new NotFoundException('TodoItem not found in updated document');
+    }
 
-    return this.mapTodoItemDocumentToModel(result.todoItems[0]);
+    return this.mapTodoItemDocumentToModel(updatedItem);
   }
 
   private mapTodoItemDocumentToModel(document: any): TodoItem {
