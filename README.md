@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[TODO](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
 
@@ -43,6 +43,9 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
+
+# production mode
+$ docker-compose up --build
 ```
 
 ## Test
@@ -57,6 +60,7 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+
 
 ## Support
 
